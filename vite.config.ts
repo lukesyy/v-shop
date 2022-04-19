@@ -37,7 +37,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: Number(env.VITE_PORT),
       proxy: {
         '/dev-api': {
-          target: 'https://api.it120.cc/xiaochengxu',
+          target: env.VITE_APP_API_HOST,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/dev-api/, ''),
