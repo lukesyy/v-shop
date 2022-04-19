@@ -1,3 +1,8 @@
+/*
+ * @Date: 2022-04-19 13:51:04
+ * @LastEditors: Lukesy
+ * @LastEditTime: 2022-04-19 13:51:36
+ */
 /**
  * 生成版本号（时间戳 按小时）
  * @returns {String}
@@ -25,7 +30,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/dev-api': {
-        target: 'https://api.it120.cc/xiaochengxu',
+        target: process.env.VUE_APP_BASE_HOST,
         changeOrigin: true,
         secure: false,
         ws: true,
