@@ -1,6 +1,11 @@
-import { getAPI } from '@/utils';
-import request from '@/utils/http/request';
-import qs from 'qs';
+/*
+ * @Date: 2022-04-19 13:51:04
+ * @LastEditors: Lukesy
+ * @LastEditTime: 2022-04-20 09:56:13
+ */
+import { getAPI } from '@/utils'
+import request from '@/utils/http/request'
+import qs from 'qs'
 
 /**
  * 校验邮件验证码是否正确
@@ -10,7 +15,7 @@ export function verificationMailCheck(data) {
     url: `/verification/mail/check`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -21,7 +26,7 @@ export function verificationMailGet(data) {
     url: `/verification/mail/get`,
     method: 'get',
     params: data,
-  });
+  })
 }
 
 /**
@@ -32,14 +37,14 @@ export function verificationPicCheck(data) {
     url: `/verification/pic/check`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
  * 获取图形验证码
  */
 export function verificationPicGet(data) {
-  return `${getAPI()}/verification/pic/get?${qs.stringify(data)}`;
+  return `${getAPI()}/verification/pic/get?${qs.stringify(data)}`
 }
 
 /**
@@ -50,7 +55,7 @@ export function verificationSmsCheck(data) {
     url: `/verification/sms/check`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -58,10 +63,10 @@ export function verificationSmsCheck(data) {
  */
 export function verificationSmsGet(data) {
   return request({
-    url: `/verification/sms/get`,
-    method: 'get',
-    params: data,
-  });
+    url: `/channel/user/getCode`,
+    method: 'post',
+    data,
+  })
 }
 
 /**
@@ -72,7 +77,7 @@ export function verificationSmsGetByToken(data) {
     url: `/verification/sms/get-by-token`,
     method: 'get',
     params: data,
-  });
+  })
 }
 
 export default {
@@ -83,4 +88,4 @@ export default {
   verificationSmsCheck,
   verificationSmsGet,
   verificationSmsGetByToken,
-};
+}

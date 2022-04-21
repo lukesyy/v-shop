@@ -7,7 +7,7 @@
         <div class="form-item">
           <div class="form-item-country">中国 +86</div>
           <van-field
-            v-model="mobile"
+            v-model="phoneNo"
             class="form-field"
             :border="false"
             type="tel"
@@ -15,7 +15,7 @@
             clearable
           />
         </div>
-        <div v-if="loginType === 'system'" class="form-item">
+        <!-- <div v-if="loginType === 'system'" class="form-item">
           <van-field
             v-model="pwd"
             class="form-field"
@@ -24,10 +24,10 @@
             placeholder="请输入密码"
             clearable
           />
-        </div>
+        </div> -->
         <div v-if="loginType === 'sms'" class="form-item">
           <van-field
-            v-model="smsCode"
+            v-model="code"
             class="form-field"
             :border="false"
             type="number"
@@ -52,7 +52,7 @@
           >登录</van-button
         >
       </div>
-      <div class="check-type">
+      <!-- <div class="check-type">
         <div class="check-type-hd">
           <span class="check-type-btn" @click="onLoginTypeChange">{{ checkTypeText }}</span>
         </div>
@@ -63,7 +63,7 @@
           </template>
           <span class="check-type-btn" @click="goPage('register')">免费注册</span>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="footer">
       <div class="footer-agreement">
@@ -73,53 +73,44 @@
         >
       </div>
     </div>
-    <!-- 图形验证码 -->
-    <Captcha v-model="captchaShow" @success="onSmsSend" />
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-import { loginProviderType, sms } from '@/utils/constant';
-import API_VERIFICATION from '@/apis/verification';
-import Captcha from '@/components/Captcha';
-import { isMobile, isPassWord } from '@/utils/validate';
-import deviceId from '@/utils/helpers/deviceId';
-import deviceModel from '@/utils/helpers/deviceModel';
+import { mapActions } from 'vuex'
+import { loginProviderType, sms } from '@/utils/constant'
+import { verificationSmsGet } from '@/apis/verification'
+import { isMobile, isPassWord } from '@/utils/validate'
+import deviceId from '@/utils/helpers/deviceId'
+import deviceModel from '@/utils/helpers/deviceModel'
 
 export default {
-  components: { Captcha },
   data() {
     return {
-      loginType: 'system',
-      mobile: '',
+      code: '',
+      loginType: 'sms',
+      phoneNo: '',
       pwd: '',
-      // 短信验证码
-      smsCode: '',
       smsTimer: null,
       smsText: '获取验证码',
       smsCount: sms.count,
-      // 图形验证码
-      captchaShow: false,
-
       submitLoading: false,
-
       agree: true,
-    };
+    }
   },
   computed: {
     submitted() {
       if (this.loginType === 'sms') {
-        return this.mobile && this.smsCode;
+        return this.phoneNo
       }
 
-      return this.mobile && this.pwd;
+      return this.phoneNo && this.pwd
     },
     loginProvider() {
-      return loginProviderType[this.loginType] || {};
+      return loginProviderType[this.loginType] || {}
     },
     checkTypeText() {
-      return this.loginType === 'sms' ? '密码登录' : '验证码登录';
+      return this.loginType === 'sms' ? '密码登录' : '验证码登录'
     },
   },
   methods: {
@@ -127,89 +118,79 @@ export default {
       login: 'user/login',
     }),
     goPage(path) {
-      this.$router.push({ path });
+      this.$router.push({ path })
     },
     onLoginTypeChange() {
-      this.loginType = this.loginType === 'sms' ? 'system' : 'sms';
+      this.loginType = this.loginType === 'sms' ? 'system' : 'sms'
     },
     onSmsBtnClicked() {
-      if (!this.mobile) {
-        this.$toast('请输入手机号');
-        return;
+      if (!this.phoneNo) {
+        this.$toast('请输入手机号')
+        return
       }
 
-      if (!isMobile(this.mobile)) {
-        this.$toast('手机号格式错误');
-        return;
+      if (!isMobile(this.phoneNo)) {
+        this.$toast('手机号格式错误')
+        return
       }
 
-      this.captchaShow = true;
-    },
-    onSmsSend({ requestId, code }) {
-      API_VERIFICATION.verificationSmsGet({
-        mobile: this.mobile,
-        key: requestId,
-        picCode: code,
+      verificationSmsGet({
+        phoneNo: this.phoneNo,
       }).then(() => {
-        this.$toast('短信已发送，请查收');
-        this.countdown(); // 立即执行一次,避免 setInterval 延迟
-        this.smsTimer = setInterval(this.countdown, 1000);
-      });
+        this.$toast('短信已发送，请查收')
+        this.countdown() // 立即执行一次,避免 setInterval 延迟
+        this.smsTimer = setInterval(this.countdown, 1000)
+      })
     },
+
     countdown() {
       if (this.smsCount > 0) {
-        this.smsCount--;
-        this.smsText = `已发送(${this.smsCount}s)`;
+        this.smsCount--
+        this.smsText = `已发送(${this.smsCount}s)`
       } else {
-        this.smsCount = sms.count;
-        this.smsText = `重新发送`;
-        clearInterval(this.smsTimer);
-        this.smsTimer = null;
+        this.smsCount = sms.count
+        this.smsText = `重新发送`
+        clearInterval(this.smsTimer)
+        this.smsTimer = null
       }
     },
     onSubmit() {
-      if (!isMobile(this.mobile)) {
-        this.$toast('手机号格式错误');
-        return;
+      if (!isMobile(this.phoneNo)) {
+        this.$toast('手机号格式错误')
+        return
       }
-
-      if (!isPassWord(this.pwd)) {
-        this.$toast('请设置8-25位(数字+字母)密码');
-        return;
+      if (!isPassWord(this.pwd) && this.loginType === 'system') {
+        this.$toast('请设置8-25位(数字+字母)密码')
+        return
       }
-
       const params = {
-        mobile: this.mobile,
+        phoneNo: this.phoneNo,
         deviceId: deviceId(),
         deviceName: deviceModel(),
-      };
-
+        provider: this.loginType,
+      }
       if (this.loginType === 'system') {
-        params.pwd = this.pwd;
+        params.pwd = this.pwd
       }
-
       if (this.loginType === 'sms') {
-        params.autoReg = true;
-        params.code = this.smsCode;
+        params.code = this.code
       }
-
-      this.submitLoading = true;
-
-      this.login({ provider: this.loginType, params })
+      this.submitLoading = true
+      this.login(params)
         .then(() => {
-          this.submitLoading = false;
+          this.submitLoading = false
           this.$route.query.redirect
             ? this.$router.replace({ path: this.$route.query.redirect })
-            : this.$router.replace({ path: '/' });
-          this.$toast.success('登录成功');
+            : this.$router.replace({ path: '/' })
+          this.$toast.success('登录成功')
         })
-        .catch((error) => {
-          this.submitLoading = false;
-          console.error(error);
-        });
+        .catch(error => {
+          this.submitLoading = false
+          console.error(error)
+        })
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>

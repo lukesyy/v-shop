@@ -26,19 +26,19 @@
       >
         <div v-for="item in list" :key="item.id" class="list-col">
           <div class="list-item" @click="onGoodClicked(item.id)">
-            <div v-if="item.recommendStatus" class="list-item-badge">推荐</div>
-            <van-image class="list-item-photo" :src="item.pic" :alt="item.name" />
+            <div v-if="item.warehourseType" class="list-item-badge">跨境进口</div>
+            <van-image class="list-item-photo" :src="item.primaryPicUrl" :alt="item.name" />
             <div class="list-item-info">
               <div class="list-item-title">{{ item.name }}</div>
               <div class="list-item-price">
                 <div class="price">
                   <div class="price-current">
                     <span class="price-current-symbol">¥</span>
-                    <span class="price-current-integer">{{ item.minPrice }}</span>
+                    <span class="price-current-integer">{{ item.counterPrice }}</span>
                   </div>
-                  <div v-if="item.originalPrice > 0" class="price-origin">
+                  <div v-if="item.retailPrice > 0" class="price-origin">
                     <span class="price-origin-symbol">¥</span>
-                    <span class="price-origin-integer">{{ item.originalPrice }}</span>
+                    <span class="price-origin-integer">{{ item.retailPrice }}</span>
                   </div>
                 </div>
                 <van-button type="primary" plain class="buy-btn">购买</van-button>
@@ -57,11 +57,11 @@
   </div>
 </template>
 <script>
-import API_GOODS from '@/apis/goods';
-import API_BANNER from '@/apis/banner';
-import Tabbar from '@/components/Tabbar';
-import Plate from '@/components/Plate';
-import { decimalFormat } from '@/utils/format';
+import { goodsList } from '@/apis/goods'
+import API_BANNER from '@/apis/banner'
+import Tabbar from '@/components/Tabbar'
+import Plate from '@/components/Plate'
+import { decimalFormat } from '@/utils/format'
 
 export default {
   components: { Tabbar, Plate },
@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       bannerList: [],
-
+      pageAdd: true,
       list: [],
       listLoading: false,
       listFinished: false,
@@ -80,58 +80,59 @@ export default {
       listEmptyImage: require('@/assets/images/empty/good.png'),
       pageCurrent: 1,
       pageSize: 20,
-    };
+    }
   },
   created() {
-    this.getBannerList();
-    this.onPage();
+    // this.getBannerList();
+    this.onPage()
   },
   methods: {
     onPageLoad() {
       if (this.listFinished) {
-        return;
+        return
       }
-      this.pageCurrent += 1;
-      this.onPage();
+      if (this.pageAdd) {
+        this.pageCurrent += 1
+      }
+      this.onPage()
     },
     onPage() {
-      this.listLoading = true;
-
+      this.listLoading = true
       const params = {
         page: this.pageCurrent,
         pageSize: this.pageSize,
-      };
-
-      API_GOODS.goodsList(params)
-        .then((res) => {
-          const records = res.data?.result ?? [];
-          const total = res.data?.totalRow ?? 0;
-
-          this.list = this.pageCurrent === 1 ? records : this.list.concat(records);
-          this.listLoading = false;
-          this.listFinished = this.list.length >= total;
+      }
+      goodsList(params)
+        .then(res => {
+          const records = res.data?.rows ?? []
+          const total = res.data?.total ?? 0
+          this.list = this.pageCurrent === 1 ? records : this.list.concat(records)
+          this.listLoading = false
+          this.listFinished = this.list.length >= total
+          this.pageAdd = true
         })
-        .catch((error) => {
-          console.error(error);
-          this.listLoading = false;
-          this.listError = true;
-        });
+        .catch(error => {
+          console.error(error)
+          this.listLoading = false
+          this.listError = true
+          this.pageAdd = false
+        })
     },
     getBannerList() {
-      API_BANNER.bannerList({ type: 'indexBanner' }).then((res) => {
-        this.bannerList = res.data || [];
-      });
+      API_BANNER.bannerList({ type: 'indexBanner' }).then(res => {
+        this.bannerList = res.data || []
+      })
     },
     onGoodClicked(id) {
-      this.$router.push({ path: '/good/detail', query: { id } });
+      this.$router.push({ path: '/good/detail', query: { id } })
     },
     onSwipeClicked(linkUrl) {
       if (linkUrl) {
-        window.location.href = linkUrl;
+        window.location.href = linkUrl
       }
     },
   },
-};
+}
 </script>
 <style lang="less" scoped>
 .swiper {
@@ -178,7 +179,7 @@ export default {
       position: absolute;
       top: 15px;
       left: 0;
-      z-index: 20;
+      z-index: 1;
       display: inline-block;
       padding: 2px 4px;
       color: var(--white);

@@ -44,16 +44,6 @@ export default {
     onAdd() {
       this.$router.push({ path: '/address/edit' });
     },
-    // eslint-disable-next-line max-params
-    formatAddress(provinceStr, cityStr, areaStr, address) {
-      let str = provinceStr;
-
-      cityStr.length > 1 && (str += cityStr);
-      areaStr.length > 1 && (str += areaStr);
-      address && (str += ` ${address}`);
-
-      return str;
-    },
     onItemClicked(id) {
       this.$router.push({
         path: '/address/edit',
@@ -67,7 +57,8 @@ export default {
 
       API_USER.userShoppingAddressList()
         .then((res) => {
-          this.list = res.data?.result ?? [];
+          this.list = res.data?.rows ?? [];
+          console.log(this.list);
         })
         .finally(() => {
           this.listLoading = false;

@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { isFunction } from '@/utils/validate';
+import { isFunction } from '@/utils/validate'
 
 export default {
   name: 'ProList',
@@ -86,55 +86,55 @@ export default {
       loading: false,
       error: false,
       finished: false,
-    };
+    }
   },
   created() {
-    this.immediate && this.onLoad();
+    this.immediate && this.onLoad()
   },
   methods: {
     deleteItemByIndex(index) {
-      this.list.splice(index, 1);
+      this.list.splice(index, 1)
     },
     refresh() {
       if (this.loading) {
-        return;
+        return
       }
 
-      this.pagination.pageCurrent = 1;
-      this.list = [];
-      this.listFinished = false;
-      this.onLoad();
+      this.pagination.pageCurrent = 1
+      this.list = []
+      this.listFinished = false
+      this.onLoad()
     },
     onLoadMore() {
       if (this.finished) {
-        return;
+        return
       }
-      this.pagination.pageCurrent += 1;
-      this.onLoad();
+      this.pagination.pageCurrent += 1
+      this.onLoad()
     },
     onLoad() {
-      this.loading = true;
+      this.loading = true
 
       this.api()
-        .then((res) => {
-          let records = res.data?.result ?? [];
-          const total = res.data?.totalRow ?? 0;
+        .then(res => {
+          let records = res.data?.result ?? []
+          const total = res.data?.total ?? 0
 
           if (this.afterFetch && isFunction(this.afterFetch)) {
-            records = this.afterFetch(res.data);
+            records = this.afterFetch(res.data)
           }
 
-          this.list = this.pagination.pageCurrent === 1 ? records : this.list.concat(records);
-          this.finished = this.list.length >= total;
+          this.list = this.pagination.pageCurrent === 1 ? records : this.list.concat(records)
+          this.finished = this.list.length >= total
         })
-        .catch((error) => {
-          console.error(error);
-          this.error = true;
+        .catch(error => {
+          console.error(error)
+          this.error = true
         })
         .finally(() => {
-          this.loading = false;
-        });
+          this.loading = false
+        })
     },
   },
-};
+}
 </script>

@@ -1,4 +1,9 @@
-export { throttle, debounce, deepClone } from './lodash';
+/*
+ * @Date: 2022-04-19 13:51:04
+ * @LastEditors: Lukesy
+ * @LastEditTime: 2022-04-20 14:27:35
+ */
+export { throttle, debounce, deepClone } from './lodash'
 
 /**
  * 获取链接某个参数 search
@@ -6,13 +11,13 @@ export { throttle, debounce, deepClone } from './lodash';
  * @returns {String} 返回参数值
  */
 export function getQueryString(name) {
-  let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
-  let r = window.location.search.substr(1).match(reg);
+  let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+  let r = window.location.search.substr(1).match(reg)
   // eslint-disable-next-line eqeqeq, no-eq-null
   if (r != null) {
-    return decodeURIComponent(r[2]);
+    return decodeURIComponent(r[2])
   }
-  return null;
+  return null
 }
 
 /**
@@ -21,22 +26,22 @@ export function getQueryString(name) {
  *
  */
 export function getURLParameters() {
-  const reg = /([^?=&]+)(=([^&]*))/g;
-  const searchParamList = window.location.search.match(reg);
-  const hashParamList = window.location.hash.match(reg);
-  const obj = {};
+  const reg = /([^?=&]+)(=([^&]*))/g
+  const searchParamList = window.location.search.match(reg)
+  const hashParamList = window.location.hash.match(reg)
+  const obj = {}
 
   searchParamList &&
-    searchParamList.forEach((v) => {
-      obj[v.slice(0, v.indexOf('='))] = decodeURIComponent(v.slice(v.indexOf('=') + 1));
-    });
+    searchParamList.forEach(v => {
+      obj[v.slice(0, v.indexOf('='))] = decodeURIComponent(v.slice(v.indexOf('=') + 1))
+    })
 
   hashParamList &&
-    hashParamList.forEach((v) => {
-      obj[v.slice(0, v.indexOf('='))] = decodeURIComponent(v.slice(v.indexOf('=') + 1));
-    });
+    hashParamList.forEach(v => {
+      obj[v.slice(0, v.indexOf('='))] = decodeURIComponent(v.slice(v.indexOf('=') + 1))
+    })
 
-  return obj;
+  return obj
 }
 
 /**
@@ -44,12 +49,12 @@ export function getURLParameters() {
  * @returns {}
  */
 export function getDevicePlatform() {
-  const ua = navigator.userAgent.toLowerCase(); // 一律小写
-  const isAndroid = /android/i.test(ua);
-  const isIOS = /iphone|ipad|ipod|ios/i.test(ua);
-  const isInWeChatApp = /micromessenger/i.test(ua); // 是否微信内打开
-  const isInMiniProgram = /miniProgram/i.test(ua); // 是否小程序内打开
-  const isInWeChatDevTools = /wechatdevtools/i.test(ua); // 是否微信开发者工具内打开
+  const ua = navigator.userAgent.toLowerCase() // 一律小写
+  const isAndroid = /android/i.test(ua)
+  const isIOS = /iphone|ipad|ipod|ios/i.test(ua)
+  const isInWeChatApp = /micromessenger/i.test(ua) // 是否微信内打开
+  const isInMiniProgram = /miniProgram/i.test(ua) // 是否小程序内打开
+  const isInWeChatDevTools = /wechatdevtools/i.test(ua) // 是否微信开发者工具内打开
 
   return {
     isAndroid,
@@ -57,7 +62,7 @@ export function getDevicePlatform() {
     isInWeChatApp,
     isInMiniProgram,
     isInWeChatDevTools,
-  };
+  }
 }
 
 /**
@@ -66,21 +71,21 @@ export function getDevicePlatform() {
  * @returns
  */
 export function getAPI(code = 'api') {
-  const host = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_HOST : location.host;
-  const origin = `${location.protocol}//${host}`;
-  const basePath = process.env.NODE_ENV === 'production' ? '/xiaochengxu' : '/dev-api';
-  const api = `${origin}${basePath}`; // 基础接口
+  const host = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_BASE_HOST : location.host
+  const origin = `${location.protocol}//${host}`
+  const basePath = process.env.NODE_ENV === 'production' ? '/xiaochengxu' : '/dev-api'
+  const api = `${origin}${basePath}` // 基础接口
   // const src = `${origin}${process.env.VUE_APP_BASE_API}`;
 
   switch (code) {
     case 'host':
-      return host;
+      return host
     case 'origin':
-      return origin;
+      return origin
     // case 'src':
     //   return src;
     default:
-      return api;
+      return api
   }
 }
 
@@ -90,7 +95,7 @@ export function getAPI(code = 'api') {
  * @param {Number} destWidth 设计稿基准屏幕宽度
  */
 export function rpx2px(n, destWidth = 375) {
-  const ratio = document.documentElement.clientWidth / destWidth;
+  const ratio = document.documentElement.clientWidth / destWidth
 
-  return (n * ratio).toFixed(2);
+  return (n * ratio).toFixed(2)
 }

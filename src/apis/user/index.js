@@ -82,7 +82,7 @@ export function userMLogin(data) {
  */
 export function userMLoginMobile(data) {
   return request({
-    url: `/user/m/loginMobile`,
+    url: `/channel/user/login`,
     method: 'post',
     data,
   });
@@ -126,7 +126,7 @@ export function userModifyPwd(data) {
  */
 export function userShoppingAddressAdd(data) {
   return request({
-    url: `/user/shipping-address/add`,
+    url: `/channel/user/address/add`,
     method: 'post',
     data,
   });
@@ -137,7 +137,7 @@ export function userShoppingAddressAdd(data) {
  */
 export function userShoppingAddressDefault(data) {
   return request({
-    url: `/user/shipping-address/default/v2`,
+    url: `/channel/user/address/getDefault`,
     method: 'get',
     params: data,
   });
@@ -148,7 +148,7 @@ export function userShoppingAddressDefault(data) {
  */
 export function userShoppingAddressDelete(data) {
   return request({
-    url: `/user/shipping-address/delete`,
+    url: `/channel/user/address/remove`,
     method: 'post',
     data,
   });
@@ -170,7 +170,7 @@ export function userShoppingAddressDetail(data) {
  */
 export function userShoppingAddressList(data) {
   return request({
-    url: `/user/shipping-address/list/v2`,
+    url: `/channel/user/address/list`,
     method: 'post',
     data,
   });
@@ -181,7 +181,7 @@ export function userShoppingAddressList(data) {
  */
 export function userShoppingAddressUpdate(data) {
   return request({
-    url: `/user/shipping-address/update`,
+    url: `/channel/user/address/edit`,
     method: 'post',
     data,
   });

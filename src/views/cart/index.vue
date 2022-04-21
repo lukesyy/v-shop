@@ -1,21 +1,13 @@
 <template>
   <div class="container">
+    <van-notice-bar wrapable left-icon="volume-o" :scrollable="false" text="本地仓商品和保税仓商品请分别购买下单" />
     <SpainList v-model="listLoading">
       <template v-if="list.length">
         <div class="goods">
           <div class="goods-header van-hairline--bottom">
             <div class="goods-header-hd">
-              <video
-                class="goods-header-cart"
-                :src="cartVideoSrc"
-                width="40"
-                height="40"
-                autoplay="autoplay"
-                muted="muted"
-                loop="loop"
-                type="video/mp4"
-              ></video>
-              <span>购物车</span>
+              <van-icon name="shopping-cart-o" size="18" />
+              <span class="goods-header-carText">购物车</span>
             </div>
             <div class="goods-header-bd" @click="onEditStatusChange">
               {{ editStatus === 1 ? '编辑' : '完成' }}
@@ -26,23 +18,27 @@
               <div class="list-item-selected">
                 <van-checkbox v-model="item.selected"></van-checkbox>
               </div>
-              <van-image fit="contain" class="list-item-pic" :src="item.pic" />
+              <van-image fit="contain" class="list-item-pic" :src="item.primaryPicUrl" />
               <div class="list-item-content">
                 <div class="list-item-title">
-                  <span v-if="item.status === 1" style="color: var(--gray-color-5)">【失效】</span>
+                  <span v-if="item.buyNumber > item.goodsNumber" style="color: var(--gray-color-5)">【库存不足】</span>
                   {{ item.name }}
                 </div>
                 <div class="list-item-desc">
-                  <div v-if="item.sku && item.sku.length" class="list-item-prop">{{ item.sku | propTitle }}</div>
+                  <div class="list-item-prop">商品类型：{{ item.goodsType === '0' ? '检验' : '营养素' }}</div>
+                  <div v-if="item.warehourseType" class="list-item-prop">
+                    仓库类型：{{ item.warehourseType === '0' ? '国内仓' : '保税仓' }}
+                  </div>
                 </div>
                 <div class="list-item-bottom">
                   <div class="list-item-price">
                     <span class="list-item-price-symbol">¥</span>
-                    <span class="list-item-price-integer">{{ item.price | decimalFormat }}</span>
+                    <span class="list-item-price-integer">{{ item.counterPrice | decimalFormat }}</span>
                   </div>
-                  <template v-if="item.status === 0">
+                  <template>
+                    <!-- :max="item.goodsNumber" -->
                     <van-stepper
-                      :value="item.number"
+                      :value="item.buyNumber"
                       async-change
                       class="sku-num-stepper"
                       @change="onGoodChange($event, index)"
@@ -93,61 +89,60 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex';
-import NP from 'number-precision';
-import API_CART from '@/apis/cart';
-import Tabbar from '@/components/Tabbar';
-import SpainList from '@/components/SpainList';
-import usePage from '@/mixins/usePage';
-import { decimalFormat } from '@/utils/format';
-import { debounce } from '@/utils';
+import { mapActions } from 'vuex'
+import NP from 'number-precision'
+import API_CART from '@/apis/cart'
+import Tabbar from '@/components/Tabbar'
+import SpainList from '@/components/SpainList'
+import usePage from '@/mixins/usePage'
+import { decimalFormat } from '@/utils/format'
+import { throttle } from '@/utils'
 
 export default {
   components: { Tabbar, SpainList },
   filters: {
     decimalFormat,
     propTitle(list) {
-      return list.map((v) => v.optionValueName).join(',');
+      return list.map(v => v.optionValueName).join(',')
     },
   },
   mixins: [usePage],
   data() {
     return {
       editStatus: 1, // 编辑, 取消
-
       list: [],
       listLoading: true,
       listEmptyText: '暂无数据',
       listEmptyImage: require('@/assets/images/empty/cart.png'),
       cartVideoSrc: require('@/assets/videos/shopping-cart.mp4'),
-    };
+    }
   },
   computed: {
     selectedList() {
-      return this.list.filter((v) => v.selected);
+      return this.list.filter(v => v.selected)
     },
     totalGoodCount() {
-      return this.selectedList.reduce((acc, cur) => NP.plus(acc, cur.number), 0);
+      return this.selectedList.reduce((acc, cur) => NP.plus(acc, cur.buyNumber), 0)
     },
     totalPrice() {
-      return this.selectedList.reduce((acc, cur) => NP.plus(acc, NP.times(cur.price, cur.number)), 0);
+      return this.selectedList.reduce((acc, cur) => NP.plus(acc, NP.times(cur.counterPrice, cur.buyNumber)), 0)
     },
     selectedAll: {
       get() {
-        return this.selectedList.length === this.list.length;
+        return this.selectedList.length === this.list.length
       },
       set(val) {
-        this.list.forEach((v) => {
-          v.selected = val;
-        });
+        this.list.forEach(v => {
+          v.selected = val
+        })
       },
     },
   },
   created() {
     if (this.hasLogin) {
-      this.getList();
+      this.getList()
     } else {
-      this.listLoading = false;
+      this.listLoading = false
     }
   },
   methods: {
@@ -155,86 +150,89 @@ export default {
       setTradeGoods: 'order/setTradeGoods',
     }),
     getList() {
-      this.listLoading = true;
-
+      this.listLoading = true
       API_CART.shoppingCartInfo()
-        .then((res) => {
-          this.list = res.data?.items ?? [];
+        .then(res => {
+          let list = res.data?.rows ?? []
+          list.forEach(item => {
+            item.selected = false
+          })
+          this.list = list
         })
         .finally(() => {
-          this.listLoading = false;
-        });
+          this.listLoading = false
+        })
     },
     onEditStatusChange() {
-      this.editStatus = this.editStatus === 1 ? 2 : 1;
+      this.editStatus = this.editStatus === 1 ? 2 : 1
     },
-    onGoodChange: debounce(function (number, index) {
-      const { key } = this.list[index];
-      this.cartNumberHandle(index, { key, number });
+    onGoodChange: throttle(function (number, index) {
+      const { id } = this.list[index]
+      this.cartNumberHandle(index, { id, number })
     }, 1000),
     onDelete() {
       if (!this.selectedList.length) {
         this.$toast({
           message: '您还没有选择商品哦',
           duration: 1500,
-        });
-        return;
+        })
+        return
       }
 
-      const type = this.selectedList.length === this.list.length ? 'empty' : 'remove';
-      const message = type === 'empty' ? `确定要清空购物车吗？` : `确定要删除这${this.selectedList.length}个商品吗？`;
+      const type = this.selectedList.length === this.list.length ? 'empty' : 'remove'
+      const message = type === 'empty' ? `确定要清空购物车吗？` : `确定要删除这${this.selectedList.length}个商品吗？`
       this.$dialog
         .confirm({
           message: message,
         })
         .then(() => {
           if (type === 'empty') {
-            this.cartEmptyHandle();
+            this.cartEmptyHandle()
           } else {
-            this.cartRemoveHandle();
+            this.cartRemoveHandle()
           }
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch(error => {
+          console.log(error)
+        })
     },
-    cartNumberHandle(index, { key, number }) {
+    cartNumberHandle(index, { id, number }) {
       this.$toast.loading({
         forbidClick: true,
         message: '修改中...',
         duration: 0,
-      });
+      })
 
-      API_CART.shoppingCartModifyNumber({ number, key })
-        .then((res) => {
-          this.$toast.clear();
-          this.list = res.data?.items ?? [];
+      API_CART.shoppingCartModifyNumber({ number, goodsId: id })
+        .then(res => {
+          this.$toast.clear()
+          this.list[index].buyNumber = number
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch(error => {
+          console.log(error)
+        })
     },
     cartEmptyHandle() {
       API_CART.shoppingCartEmpty()
         .then(() => {
-          this.list = [];
+          this.list = []
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch(error => {
+          console.log(error)
+        })
     },
     cartRemoveHandle() {
-      const keyStr = this.selectedList.map((v) => v.key).join(',');
-      API_CART.shoppingCartRemove({ key: keyStr })
-        .then((res) => {
-          this.list = res.data?.items ?? [];
+      const keyStr = this.selectedList.map(v => v.id)
+      API_CART.shoppingCartRemove({ goodsIds: keyStr })
+        .then(res => {
+          this.getList()
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch(error => {
+          console.log(error)
+        })
     },
     goHome() {
-      this.$router.replace('/home');
+      this.$router.replace('/home')
     },
     goLogin() {
       this.$router.push({
@@ -242,32 +240,58 @@ export default {
         query: {
           redirect: this.$route.path,
         },
-      });
+      })
     },
     onSubmit() {
       if (!this.selectedList.length) {
         this.$toast({
           message: '您还没有选择商品哦',
           duration: 1500,
-        });
-        return;
+        })
+        return
       }
-
-      if (this.selectedList.some((v) => v.status === 1)) {
+      let tag = true
+      // 因为 for循环可以提前停止 所以这里使用for进行验证
+      for (let i = 0; i < this.selectedList.length - 1; i++) {
+        if (this.selectedList[i].goodsType !== this.selectedList[i + 1].goodsType) {
+          tag = false
+          break
+        }
+      }
+      if (!tag) {
         this.$toast({
-          message: '请删除掉失效商品',
+          message: '请选择相同类型商品下单',
           duration: 1500,
-        });
-        return;
+        })
+        return
       }
-
+      for (let i = 0; i < this.selectedList.length - 1; i++) {
+        if (this.selectedList[i].warehourseType !== this.selectedList[i + 1].warehourseType) {
+          tag = false
+          break
+        }
+      }
+      if (!tag) {
+        this.$toast({
+          message: '请选择相同仓库商品下单',
+          duration: 1500,
+        })
+        return
+      }
+      if (this.selectedList.some(v => v.buyNumber > v.goodsNumber)) {
+        this.$toast({
+          message: '请减少库存不足商品的数量',
+          duration: 1500,
+        })
+        return
+      }
       this.setTradeGoods({
         origin: 'cart',
         list: this.selectedList,
-      });
+      })
     },
   },
-};
+}
 </script>
 <style lang="less" scoped>
 .goods {
@@ -299,8 +323,11 @@ export default {
     &-hd {
       display: flex;
       align-items: center;
+      justify-items: center;
     }
-
+    &-carText {
+      margin-left: 6px;
+    }
     &-bd {
       position: relative;
       overflow: hidden;
@@ -462,10 +489,5 @@ export default {
     border-radius: 16px;
   }
 
-  ::v-deep .van-empty__bottom {
-    // border: 1px solid var(--brand-color);
-    // color: var(--brand-color);
-    // background: transparent;
-  }
 }
 </style>

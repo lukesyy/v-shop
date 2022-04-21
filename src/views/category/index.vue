@@ -44,8 +44,8 @@
 </template>
 
 <script>
-import Tabbar from '@/components/Tabbar';
-import API_GOODS from '@/apis/goods';
+import Tabbar from '@/components/Tabbar'
+import API_GOODS from '@/apis/goods'
 
 export default {
   components: {
@@ -66,64 +66,64 @@ export default {
       listEmptyImage: require('@/assets/images/empty/good.png'),
       pageCurrent: 1,
       pageSize: 10,
-    };
+    }
   },
   created() {
-    this.getCategoryList();
+    this.getCategoryList()
   },
   methods: {
     getCategoryList() {
-      API_GOODS.goodsCategoryAll().then((res) => {
+      API_GOODS.goodsCategoryAll().then(res => {
         if (res.data?.length) {
-          this.categoryList = res.data.map((v) => ({ ...v, text: v.name }));
+          this.categoryList = res.data.map(v => ({ ...v, text: v.name }))
         }
-        this.onPage();
-      });
+        this.onPage()
+      })
     },
     onCategoryChange() {
       if (!this.listLoading) {
-        this.listFinished = false;
-        this.list = [];
-        this.pageCurrent = 1;
-        this.onPage();
+        this.listFinished = false
+        this.list = []
+        this.pageCurrent = 1
+        this.onPage()
       }
     },
     onGoodClicked(id) {
-      this.$router.push({ path: '/good/detail', query: { id } });
+      this.$router.push({ path: '/good/detail', query: { id } })
     },
     onPageLoad() {
       if (this.listFinished) {
-        return;
+        return
       }
-      this.pageCurrent += 1;
-      this.onPage();
+      this.pageCurrent += 1
+      this.onPage()
     },
     onPage() {
-      this.listLoading = true;
+      this.listLoading = true
 
       const params = {
         categoryId: this.categoryList[this.categoryIndex].id,
         page: this.pageCurrent,
         pageSize: this.pageSize,
-      };
+      }
 
       API_GOODS.goodsList(params)
-        .then((res) => {
-          const records = res.data?.result ?? [];
-          const total = res.data?.totalRow ?? 0;
+        .then(res => {
+          const records = res.data?.result ?? []
+          const total = res.data?.total ?? 0
 
-          this.list = this.pageCurrent === 1 ? records : this.list.concat(records);
-          this.listLoading = false;
-          this.listFinished = this.list.length >= total;
+          this.list = this.pageCurrent === 1 ? records : this.list.concat(records)
+          this.listLoading = false
+          this.listFinished = this.list.length >= total
         })
-        .catch((error) => {
-          console.error(error);
-          this.listLoading = false;
-          this.listError = true;
-        });
+        .catch(error => {
+          console.error(error)
+          this.listLoading = false
+          this.listError = true
+        })
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>
@@ -172,7 +172,7 @@ export default {
 
     &-badge {
       position: absolute;
-      top: 15px;
+      top: 10px;
       left: 0;
       z-index: 20;
       display: inline-block;

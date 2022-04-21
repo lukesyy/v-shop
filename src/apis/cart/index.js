@@ -5,7 +5,7 @@ import request from '@/utils/http/request';
  */
 export function shoppingCartAdd(data) {
   return request({
-    url: `/shopping-cart/add`,
+    url: `/channel/cart/add`,
     method: 'post',
     data,
   });
@@ -16,7 +16,7 @@ export function shoppingCartAdd(data) {
  */
 export function shoppingCartEmpty(data) {
   return request({
-    url: `/shopping-cart/empty`,
+    url: `/channel/cart/removeAll`,
     method: 'post',
     data,
   });
@@ -27,7 +27,17 @@ export function shoppingCartEmpty(data) {
  */
 export function shoppingCartInfo(data) {
   return request({
-    url: `/shopping-cart/info`,
+    url: `/channel/cart/goods`,
+    method: 'get',
+    params: data,
+  });
+}
+/**
+ * 获取购物车商品数量
+ */
+export function shoppingCartTotal(data) {
+  return request({
+    url: `/channel/cart/total`,
     method: 'get',
     params: data,
   });
@@ -38,7 +48,7 @@ export function shoppingCartInfo(data) {
  */
 export function shoppingCartModifyNumber(data) {
   return request({
-    url: `/shopping-cart/modifyNumber`,
+    url: `/channel/cart/edit`,
     method: 'post',
     data,
   });
@@ -49,7 +59,7 @@ export function shoppingCartModifyNumber(data) {
  */
 export function shoppingCartRemove(data) {
   return request({
-    url: `/shopping-cart/remove`,
+    url: `/channel/cart/remove`,
     method: 'post',
     data,
   });
@@ -73,4 +83,5 @@ export default {
   shoppingCartModifyNumber,
   shoppingCartRemove,
   shoppingCartSelect,
+  shoppingCartTotal
 };

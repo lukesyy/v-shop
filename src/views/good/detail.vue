@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <van-swipe :autoplay="3000" class="swiper">
-      <van-swipe-item v-for="item in picList" :key="item.id" class="swiper-item">
-        <van-image class="swiper-item-img" fit="contain" :src="item.pic" alt="" />
+      <van-swipe-item v-for="item in [goodsInfo.primaryPicUrl]" :key="item" class="swiper-item">
+        <van-image class="swiper-item-img" fit="contain" :src="item" alt="" />
       </van-swipe-item>
     </van-swipe>
     <div class="section">
@@ -10,21 +10,21 @@
         <div class="price-hd">
           <div class="price-current">
             <span class="price-current-symbol">¥</span>
-            <span class="price-current-integer">{{ goodPrice | priceIntegerFormat(goodMaxPrice) }}</span>
+            <span class="price-current-integer">{{ goodsInfo.counterPrice }}</span>
             <!-- <span v-if="marketing.type" class="price-tag">{{ marketing.info.label }}</span> -->
           </div>
-          <div v-if="basicInfo.originalPrice > 0" class="price-origin">
+          <div v-if="goodsInfo.retailPrice > 0" class="price-origin">
             <span class="price-origin-label">价格</span>
             <span class="price-origin-symbol">¥</span>
-            <span class="price-origin-integer">{{ basicInfo.originalPrice | decimalFormat }}</span>
+            <span class="price-origin-integer">{{ goodsInfo.retailPrice | decimalFormat }}</span>
           </div>
         </div>
       </div>
       <div class="desc">
         <div class="desc-hd">
-          <div class="desc-title van-multi-ellipsis--l2">{{ basicInfo.name }}</div>
-          <div v-if="basicInfo.characteristic" class="desc-brief">
-            {{ basicInfo.characteristic }}
+          <div class="desc-title van-multi-ellipsis--l2">{{ goodsInfo.name }}</div>
+          <div v-if="goodsInfo.characteristic" class="desc-brief">
+            {{ goodsInfo.characteristic }}
           </div>
         </div>
       </div>
@@ -33,29 +33,37 @@
       <div class="stock-item">
         {{ goodDeliveryTitle }}
       </div>
-      <!-- <div class="stock-item">购买：{{ basicInfo.numberSells }}</div> -->
-      <div class="stock-item">剩余 {{ basicInfo.stores }}</div>
+      <!-- <div class="stock-item">购买：{{ goodsInfo.numberSells }}</div> -->
+      <div class="stock-item">剩余 {{ goodsInfo.goodsNumber }}</div>
     </div>
-    <Coupons title="领券" :list="couponList" />
-    <van-cell>
+    <!-- <Coupons title="领券" :list="couponList" /> -->
+    <van-cell v-if="goodsInfo.paraUse">
       <template #title>
         <div class="cell-bar">
-          <div class="cell-bar-title">服务</div>
-          <div class="cell-bar-text">{{ afterSaleTitle }}</div>
+          <div class="cell-bar-title">服务方法</div>
+          <div class="cell-bar-text">{{ goodsInfo.paraUse }}</div>
         </div>
       </template>
     </van-cell>
-    <van-cell v-if="hasSku" :border="false" is-link @click="onSkuShow()">
+    <van-cell v-if="goodsInfo.paraPackage">
+      <template #title>
+        <div class="cell-bar">
+          <div class="cell-bar-title">产品规格</div>
+          <div class="cell-bar-text">{{ goodsInfo.paraPackage }}</div>
+        </div>
+      </template>
+    </van-cell>
+    <!-- <van-cell v-if="hasSku" :border="false" is-link @click="onSkuShow()">
       <template #title>
         <div class="cell-bar">
           <div class="cell-bar-title">{{ initialSku.selectedPropList.length ? '已选' : '选择' }}</div>
           <div class="cell-bar-text">{{ goodSelectedSkuTitle }}</div>
         </div>
       </template>
-    </van-cell>
-    <Reputations class="mt10" :goods-id="basicInfo.id" :list="reputationList" :total="reputationTotal" />
+    </van-cell> -->
+    <!-- <Reputations class="mt10" :goods-id="goodsInfo.id" :list="reputationList" :total="reputationTotal" /> -->
     <Plate title="商品详情" class="mt10" />
-    <div class="goods-content" v-html="content"></div>
+    <div class="goods-content" v-html="goodsInfo.goodsDesc"></div>
     <!-- 商品导航栏 -->
     <van-goods-action>
       <van-goods-action-icon icon="thumb-circle-o" text="首页" to="/home" replace />
@@ -69,25 +77,25 @@
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex';
-import API_GOODS from '@/apis/goods';
-import API_DISCOUNTS from '@/apis/discounts';
-import API_CART from '@/apis/cart';
-import Plate from '@/components/Plate';
-import Sku from '@/components/Sku';
-import Coupons from './components/Coupons';
-import Reputations from './components/Reputations';
-import { decimalFormat, priceIntegerFormat } from '@/utils/format';
-import usePage from '@/mixins/usePage';
-import { goodReputationModel } from '@/model/modules/good/reputation';
-import { getAfterSaleTitle } from '@/model/modules/order/afterSale';
-import { throttle } from '@/utils';
+import { mapActions } from 'vuex'
+import API_GOODS from '@/apis/goods'
+
+import API_CART from '@/apis/cart'
+import Plate from '@/components/Plate'
+import Sku from '@/components/Sku'
+// import Coupons from './components/Coupons'//领取优惠券
+// import Reputations from './components/Reputations'//评价
+import { decimalFormat, priceIntegerFormat } from '@/utils/format'
+import usePage from '@/mixins/usePage'
+import { goodReputationModel } from '@/model/modules/good/reputation'
+import { getAfterSaleTitle } from '@/model/modules/order/afterSale'
+import { throttle } from '@/utils'
 
 export default {
   components: {
     Plate,
-    Coupons,
-    Reputations,
+    // Coupons,
+    // Reputations,
     Sku,
   },
   filters: { decimalFormat, priceIntegerFormat },
@@ -95,7 +103,7 @@ export default {
   data() {
     return {
       picList: [],
-      basicInfo: {},
+      goodsInfo: {},
       logistics: {},
       couponList: [],
       reputationList: [],
@@ -121,54 +129,49 @@ export default {
         selectedProps: {},
         selectedPropList: [],
       },
-    };
+    }
   },
   computed: {
     /**
      * 是否多规格
      */
     hasSku() {
-      return !!this.sku.skuList.length;
+      return !!this.sku.skuList.length
     },
     goodPrice() {
       if (this.hasSku) {
-        return this.sku.skuList[0].price;
+        return this.sku.skuList[0].price
       } else {
-        return this.basicInfo.minPrice;
+        return this.goodsInfo.minPrice
       }
     },
     goodMaxPrice() {
       if (this.hasSku) {
-        return this.sku.skuList[this.sku.skuList.length - 1].price;
+        return this.sku.skuList[this.sku.skuList.length - 1].price
       } else {
-        return '';
+        return ''
       }
     },
     goodSelectedSkuTitle() {
       if (this.hasSku) {
         if (this.initialSku.selectedPropList.length) {
-          return this.initialSku.selectedPropList.reduce((acc, cur) => `${acc} ${cur.childName}`, '');
+          return this.initialSku.selectedPropList.reduce((acc, cur) => `${acc} ${cur.childName}`, '')
         } else {
-          return this.sku.propList.reduce((acc, cur) => `${acc} ${cur.name}`, '');
+          return this.sku.propList.reduce((acc, cur) => `${acc} ${cur.name}`, '')
         }
       } else {
-        return '';
+        return ''
       }
     },
     goodDeliveryTitle() {
-      if (this.basicInfo.logisticsId) {
-        return `运费 ${this.logistics.isFree ? '包邮' : '不包邮'}`;
-      } else {
-        return `无需配送`;
-      }
+      return `运费 ${this.goodsInfo.shippingFee ? '包邮' : '￥' + this.goodsInfo.shippingFee}`
     },
   },
   created() {
-    this.getGoodsDetail();
-    this.getGoodsReputation();
+    this.getGoodsDetail()
+    // this.getGoodsReputation()
     if (this.hasLogin) {
-      this.getCouponList();
-      this.getCartCount();
+      this.getCartCount()
     }
   },
   methods: {
@@ -176,13 +179,13 @@ export default {
       setTradeGoods: 'order/setTradeGoods',
     }),
     onSkuShow(type) {
-      this.skuNextActionType = type;
-      this.skuShow = true;
+      this.skuNextActionType = type
+      this.skuShow = true
     },
     onSkuConfirm: throttle(function (data) {
-      this.skuShow = false;
+      this.skuShow = false
       if (this.skuNextActionType === 'addCart') {
-        this.addCartHandle();
+        this.addCartHandle()
       } else {
         this.setTradeGoods({
           origin: 'buy',
@@ -193,27 +196,23 @@ export default {
               number: this.initialSku.selectedNum,
               pic: this.sku.goodInfo.pic,
               price: data.selectedSkuComb.price,
-              logisticsId: this.basicInfo.logisticsId,
+              logisticsId: this.goodsInfo.logisticsId,
               propertyList: this.initialSku.selectedPropList,
             },
           ],
-        });
+        })
       }
     }, 1000),
     onConcatService() {
-      this.$toast('未开放：客服');
+      this.$toast('未开放：客服')
     },
     getGoodsDetail() {
-      API_GOODS.goodsDetail({ id: this.$route.query.id }).then((res) => {
-        const { pics, basicInfo, content, logistics = {}, properties = [], skuList = [] } = res.data;
+      API_GOODS.goodsDetail(this.$route.query.id).then(res => {
+        console.log(res)
+        const goodsInfo = res.data
 
-        // 商品已下架
-        if (basicInfo.status === 1) {
-          this.$toast(basicInfo.statusStr);
-          return;
-        }
         // 商品库存为0
-        if (basicInfo.stores === 0) {
+        if (goodsInfo.goodsNumber === 0) {
           this.$dialog
             .confirm({
               title: '提示',
@@ -222,88 +221,86 @@ export default {
             })
             .then(() => {
               // on confirm
-              this.$router.replace({ path: '/home' });
-            });
-          return;
+              this.$router.replace({ path: '/home' })
+            })
+          return
         }
+        this.sku = {
+          goodsId: res.data.id,
+          price: res.data.counterPrice,
+          stock: res.data.goodsNumber,
+          goodInfo: res.data,
+          propList: [],
+          skuList: [],
+        }
+        document.title = goodsInfo.name
+        this.goodsInfo = goodsInfo
 
-        document.title = basicInfo.name;
-        this.picList = pics;
-        this.basicInfo = basicInfo;
-        this.logistics = logistics;
-        this.content = content;
-
-        this.getSkuData(basicInfo, properties, skuList);
-        this.getAfterService();
+        // this.getSkuData(goodsInfo, properties, skuList)
+        // this.getAfterService()
         // TODO 商品收藏
-      });
+      })
     },
     getAfterService() {
-      this.afterSaleTitle = getAfterSaleTitle(this.basicInfo.afterSale);
+      this.afterSaleTitle = getAfterSaleTitle(this.goodsInfo.afterSale)
     },
     getCartCount() {
-      API_CART.shoppingCartInfo().then((res) => {
-        this.cartCount = res.data?.number;
-      });
+      API_CART.shoppingCartTotal().then(res => {
+        this.cartCount = res.data || 0
+      })
     },
     addCartHandle() {
       const params = {
         goodsId: this.sku.goodsId,
         number: this.initialSku.selectedNum,
-      };
+      }
 
       if (this.initialSku.selectedPropList.length) {
         params.sku = JSON.stringify(
-          this.initialSku.selectedPropList.map((v) => ({
+          this.initialSku.selectedPropList.map(v => ({
             optionId: v.id,
             optionValueId: v.childId,
           })),
-        );
+        )
       }
 
       API_CART.shoppingCartAdd(params)
         .then(() => {
-          this.$toast('已成功加入购物车');
-          this.getCartCount();
+          this.$toast('已成功加入购物车')
+          this.getCartCount()
         })
-        .catch((error) => {
-          console.error(error);
-        });
+        .catch(error => {
+          console.error(error)
+        })
     },
     getGoodsReputation() {
-      API_GOODS.goodsReputation({ goodsId: this.$route.query.id, page: 1, pageSize: 1 }).then((res) => {
-        const records = res.data?.result ?? [];
-        const total = res.data?.totalRow ?? 0;
+      API_GOODS.goodsReputation({ goodsId: this.$route.query.id, page: 1, pageSize: 1 }).then(res => {
+        const records = res.data?.result ?? []
+        const total = res.data?.total ?? 0
         if (records.length) {
-          this.reputationTotal = total;
-          this.reputationList = goodReputationModel(records);
+          this.reputationTotal = total
+          this.reputationList = goodReputationModel(records)
         }
-      });
+      })
     },
-    getCouponList() {
-      API_DISCOUNTS.discountsCoupons().then((res) => {
-        if (res.data) {
-          this.couponList = res.data;
-        }
-      });
-    },
-    getSkuData(basicInfo, properties, skuList) {
+
+    getSkuData(goodsInfo, properties, skuList) {
       this.sku = {
-        goodsId: basicInfo.id,
-        stock: basicInfo.stores,
-        price: basicInfo.minPrice,
+        goodsId: goodsInfo.id,
+        stock: goodsInfo.stores,
+        price: goodsInfo.minPrice,
         goodInfo: {
-          id: basicInfo.id,
-          pic: basicInfo.pic,
-          name: basicInfo.name,
-          unit: basicInfo.unit,
+          id: goodsInfo.id,
+          pic: goodsInfo.pic,
+          name: goodsInfo.name,
+          unit: goodsInfo.unit,
         },
         propList: properties,
         skuList: skuList.sort((a, b) => a.price - b.price), // 按照商品价格从低到高排序
-      };
+      }
     },
   },
-};
+}
 </script>
 <style lang="less" scoped>
 .section {

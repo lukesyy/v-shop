@@ -1,4 +1,4 @@
-import request from '@/utils/http/request';
+import request from '@/utils/http/request'
 
 /**
  * 抢占秒杀名额
@@ -8,7 +8,7 @@ export function goodsSeckillGrab(data) {
     url: `/goods/seckill/grab`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -19,7 +19,7 @@ export function goodsVisitLog(data) {
     url: `/goods/visitLog`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -30,7 +30,7 @@ export function goodsVisitLogAdd(data) {
     url: `/goods/visitLog/add`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -41,7 +41,7 @@ export function goodsVisitLogClear(data) {
     url: `/goods/visitLog/clear`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -52,7 +52,7 @@ export function goodsVisitLogDelete(data) {
     url: `/goods/visitLog/delete`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -63,7 +63,7 @@ export function goodsBrandDetail(data) {
     url: `/shop/goods/brand/detail`,
     method: 'get',
     params: data,
-  });
+  })
 }
 
 /**
@@ -74,7 +74,7 @@ export function goodsBrandFavAdd(data) {
     url: `/shop/goods/brand/fav/add`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -85,7 +85,7 @@ export function goodsBrandFavCheck(data) {
     url: `/shop/goods/brand/fav/check`,
     method: 'get',
     params: data,
-  });
+  })
 }
 
 /**
@@ -96,7 +96,7 @@ export function goodsBrandFavDelete(data) {
     url: `/shop/goods/brand/fav/delete`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -107,7 +107,7 @@ export function goodsBrandFavList(data) {
     url: `/shop/goods/brand/fav/list`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -118,7 +118,7 @@ export function goodsBrandList(data) {
     url: `/shop/goods/brand/list`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -129,7 +129,7 @@ export function goodsCategoryAll(data) {
     url: `/shop/goods/category/all`,
     method: 'get',
     params: data,
-  });
+  })
 }
 
 /**
@@ -140,7 +140,7 @@ export function goodsCategoryInfo(data) {
     url: `/shop/goods/category/info`,
     method: 'get',
     params: data,
-  });
+  })
 }
 
 /**
@@ -151,7 +151,7 @@ export function goodsDel(data) {
     url: `/shop/goods/del`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -159,10 +159,9 @@ export function goodsDel(data) {
  */
 export function goodsDetail(data) {
   return request({
-    url: `/shop/goods/detail`,
+    url: `/channel/goods/` + data,
     method: 'get',
-    params: data,
-  });
+  })
 }
 
 /**
@@ -173,7 +172,7 @@ export function goodsFavAdd(data) {
     url: `/shop/goods/fav/add`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -184,7 +183,7 @@ export function goodsFavCheck(data) {
     url: `/shop/goods/fav/check`,
     method: 'get',
     params: data,
-  });
+  })
 }
 
 /**
@@ -195,7 +194,7 @@ export function goodsFavDelete(data) {
     url: `/shop/goods/fav/delete`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -206,7 +205,7 @@ export function goodsFavList(data) {
     url: `/shop/goods/fav/list`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -217,7 +216,7 @@ export function goodsGoodsAddition(data) {
     url: `/shop/goods/goodsAddition`,
     method: 'get',
     params: data,
-  });
+  })
 }
 
 /**
@@ -228,7 +227,7 @@ export function goodsHisDelete(data) {
     url: `/shop/goods/his/delete`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -239,7 +238,7 @@ export function goodsHisList(data) {
     url: `/shop/goods/his/list`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -250,7 +249,7 @@ export function goodsLimitation(data) {
     url: `/shop/goods/limitation`,
     method: 'get',
     params: data,
-  });
+  })
 }
 
 /**
@@ -258,10 +257,10 @@ export function goodsLimitation(data) {
  */
 export function goodsList(data) {
   return request({
-    url: `/shop/goods/list/v2`,
+    url: `/channel/goods/list`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -272,7 +271,7 @@ export function goodsPrice(data) {
     url: `/shop/goods/price`,
     method: 'post',
     data,
-  });
+  })
 }
 
 /**
@@ -283,7 +282,7 @@ export function goodsPriceDay(data) {
     url: `/shop/goods/price/day`,
     method: 'get',
     params: data,
-  });
+  })
 }
 
 /**
@@ -294,7 +293,7 @@ export function goodsRebate(data) {
     url: `/shop/goods/rebate/v2`,
     method: 'get',
     params: data,
-  });
+  })
 }
 
 /**
@@ -305,7 +304,7 @@ export function goodsReputation(data) {
     url: `/shop/goods/reputation/v2`,
     method: 'post',
     data,
-  });
+  })
 }
 
 export default {
@@ -337,4 +336,4 @@ export default {
   goodsPriceDay,
   goodsRebate,
   goodsReputation,
-};
+}

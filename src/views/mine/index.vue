@@ -85,16 +85,16 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex';
-import API_USER from '@/apis/user';
-import API_DISCOUNTS from '@/apis/discounts';
-import API_ORDER from '@/apis/order';
-import Copyright from '@/components/Copyright';
-import Tabbar from '@/components/Tabbar';
-import MineSvgWaveBg from '@/components/MineSvgWaveBg';
-import usePage from '@/mixins/usePage';
-import { countPair } from '@/utils/format';
-import { assets } from '@/utils/constant';
+import { mapGetters, mapActions } from 'vuex'
+import API_USER from '@/apis/user'
+import API_DISCOUNTS from '@/apis/discounts'
+import API_ORDER from '@/apis/order'
+import Copyright from '@/components/Copyright'
+import Tabbar from '@/components/Tabbar'
+import MineSvgWaveBg from '@/components/MineSvgWaveBg'
+import usePage from '@/mixins/usePage'
+import { countPair } from '@/utils/format'
+import { assets } from '@/utils/constant'
 
 export default {
   filters: {
@@ -161,7 +161,7 @@ export default {
         { icon: 'setting-o', title: '设置', path: '/setting' },
         { icon: require('@/assets/images/icon_art.png'), title: '主题', path: '/theme' },
       ],
-    };
+    }
   },
   computed: {
     ...mapGetters({
@@ -171,8 +171,8 @@ export default {
   },
   created() {
     if (this.hasLogin) {
-      this.getUserInfo();
-      this.getCounts();
+      this.getUserInfo()
+      this.getCounts()
     }
   },
   methods: {
@@ -180,18 +180,18 @@ export default {
       getUserInfo: 'user/getUserInfo',
     }),
     onEasterEgg() {
-      document.querySelector('.header-avatar').classList.toggle('active');
+      document.querySelector('.header-avatar').classList.toggle('active')
     },
     goPage(path) {
       if (['/theme'].includes(path)) {
-        this.$router.push({ path });
-        return;
+        this.$router.push({ path })
+        return
       }
 
       if (this.hasLogin) {
-        this.$router.push({ path });
+        this.$router.push({ path })
       } else {
-        this.goLogin({ redirect: path });
+        this.goLogin({ redirect: path })
       }
     },
     goLogin({ redirect }) {
@@ -200,29 +200,29 @@ export default {
         query: {
           redirect: redirect || this.$route.path,
         },
-      });
+      })
     },
     getCounts() {
-      API_USER.userAmount().then((res) => {
-        this.balance = res.data?.balance ?? 0;
-        this.growth = res.data?.growth ?? 0;
-        this.score = res.data?.score ?? 0;
-      });
+      API_USER.userAmount().then(res => {
+        this.balance = res.data?.balance ?? 0
+        this.growth = res.data?.growth ?? 0
+        this.score = res.data?.score ?? 0
+      })
 
-      API_ORDER.orderStatistics().then((res) => {
-        const orderCount = res.data; // 为0时角标不显示
+      API_ORDER.orderStatistics().then(res => {
+        const orderCount = res.data // 为0时角标不显示
 
-        this.orderList.forEach((item) => {
-          orderCount[item.countKey] && (item.count = orderCount[item.countKey]);
-        });
-      });
+        this.orderList.forEach(item => {
+          orderCount[item.countKey] && (item.count = orderCount[item.countKey])
+        })
+      })
 
-      API_DISCOUNTS.discountsStatistics().then((res) => {
-        this.couponCanUse = res.data?.canUse ?? 0;
-      });
+      API_DISCOUNTS.discountsStatistics().then(res => {
+        this.couponCanUse = res.data?.canUse ?? 0
+      })
     },
   },
-};
+}
 </script>
 <style lang="less" scoped>
 .style-box() {

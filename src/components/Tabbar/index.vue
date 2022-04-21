@@ -1,3 +1,8 @@
+<!--
+ * @Date: 2022-04-19 13:50:35
+ * @LastEditors: Lukesy
+ * @LastEditTime: 2022-04-19 17:21:54
+-->
 <template>
   <div class="tabbar-wrap">
     <van-tabbar v-model="active" class="tabbar" fixed>
@@ -17,46 +22,47 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Tabbar',
   data() {
     return {
       active: '/home',
-    };
+    }
   },
   computed: {
     ...mapGetters({
       tabBar: 'app/tabBar',
     }),
     tabList() {
-      const tabList = this.tabBar.list;
+      const tabList = this.tabBar.list
 
-      return tabList;
+      return tabList
     },
   },
   watch: {
     $route: {
       handler({ path }) {
-        this.active = path;
+        this.active = path
       },
       immediate: true,
     },
   },
   methods: {
     onTabClicked(index) {
-      const { pagePath } = this.tabList[index];
+      const { pagePath } = this.tabList[index]
       this.$router.replace({
         path: pagePath,
-      });
+      })
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>
 .tabbar-wrap {
+  z-index: 9999;
   height: calc(50px + constant(safe-area-inset-bottom));
   height: calc(50px + env(safe-area-inset-bottom));
 }

@@ -45,7 +45,11 @@
       </div>
       <div class="sku-num">
         <div class="sku-num-title">购买数量</div>
-        <van-stepper v-model="initialSku.selectedNum" class="sku-num-stepper" />
+        <van-stepper
+          v-model="initialSku.selectedNum"
+          class="sku-num-stepper"
+          :max="selectedSkuComb.stock "
+        />
       </div>
     </div>
     <div class="sku-actions">
@@ -55,7 +59,7 @@
 </template>
 
 <script>
-import { decimalFormat, priceIntegerFormat } from '@/utils/format';
+import { decimalFormat, priceIntegerFormat } from '@/utils/format'
 
 export default {
   filters: {
@@ -72,34 +76,34 @@ export default {
      * 是否多规格
      */
     hasSku() {
-      return !!this.sku.skuList.length;
+      return !!this.sku.skuList.length
     },
     skuValue() {
       if (this.hasSku) {
-        const { skuList } = this.sku;
-        let propertyChildIds = ``;
-        Object.keys(this.initialSku.selectedProps).forEach((key) => {
-          propertyChildIds += `${key}:${this.initialSku.selectedProps[key]},`;
-        });
+        const { skuList } = this.sku
+        let propertyChildIds = ``
+        Object.keys(this.initialSku.selectedProps).forEach(key => {
+          propertyChildIds += `${key}:${this.initialSku.selectedProps[key]},`
+        })
 
-        return skuList.find((v) => v.propertyChildIds === propertyChildIds);
+        return skuList.find(v => v.propertyChildIds === propertyChildIds)
       }
 
-      return undefined;
+      return undefined
     },
     selectedPropTitle() {
       if (this.hasSku) {
-        const { propList } = this.sku;
-        const { selectedPropList } = this.initialSku;
+        const { propList } = this.sku
+        const { selectedPropList } = this.initialSku
 
         return this.skuValue
           ? `已选 ${selectedPropList.reduce((acc, cur) => `${acc} ${cur.childName}`, '')}`
           : `请选择 ${propList.reduce(
-              (acc, cur) => `${acc}${selectedPropList.some((v) => v.id === cur.id) ? '' : cur.name}`,
+              (acc, cur) => `${acc}${selectedPropList.some(v => v.id === cur.id) ? '' : cur.name}`,
               '',
-            )}`;
+            )}`
       } else {
-        return '';
+        return ''
       }
     },
     selectedSkuComb() {
@@ -109,46 +113,44 @@ export default {
             price: this.skuValue.price,
             maxPrice: this.skuValue.price,
             stock: this.skuValue.stores,
-          };
+          }
         } else {
-          const { skuList } = this.sku;
+          const { skuList } = this.sku
 
           return {
             price: skuList[0].price,
             maxPrice: skuList[skuList.length - 1].price,
             stock: this.sku.stock,
-          };
+          }
         }
       } else {
         return {
           price: this.sku.price,
           maxPrice: this.sku.price,
           stock: this.sku.stock,
-        };
+        }
       }
     },
   },
   methods: {
     onClose() {
-      this.$emit('input', false);
+      this.$emit('input', false)
     },
     onOpen() {
-      this.$emit('input', true);
+      this.$emit('input', true)
     },
     onPropClicked(index, i) {
-      const item = this.sku.propList[index];
-      const v = item.childsCurGoods[i];
+      const item = this.sku.propList[index]
+      const v = item.childsCurGoods[i]
 
       if (this.initialSku.selectedProps[item.id] === v.id) {
-        this.$set(this.initialSku.selectedProps, item.id, 0);
+        this.$set(this.initialSku.selectedProps, item.id, 0)
       } else {
-        this.$set(this.initialSku.selectedProps, item.id, v.id);
+        this.$set(this.initialSku.selectedProps, item.id, v.id)
       }
-
-      const selectedPropList = [];
-
-      this.sku.propList.forEach((item) => {
-        item.childsCurGoods.forEach((v) => {
+      const selectedPropList = []
+      this.sku.propList.forEach(item => {
+        item.childsCurGoods.forEach(v => {
           this.initialSku.selectedProps[item.id] === v.id &&
             selectedPropList.push({
               id: item.id,
@@ -156,38 +158,38 @@ export default {
               childId: v.id,
               childName: v.name,
               propIds: `${item.id}:${v.id}`,
-            });
-        });
-      });
+            })
+        })
+      })
 
-      this.initialSku.selectedPropList = selectedPropList;
+      this.initialSku.selectedPropList = selectedPropList
     },
     onSubmit() {
       if (this.initialSku.selectedNum > this.selectedSkuComb.stock) {
         this.$toast({
           message: '库存不足',
           duration: 1500,
-        });
-        return;
+        })
+        return
       }
 
       if (this.hasSku && !this.skuValue) {
         this.$toast({
           message: '请选择商品规格',
           duration: 1500,
-        });
-        return;
+        })
+        return
       }
 
       const data = {
         goodsId: this.sku.goodInfo.id,
         selectedSkuComb: this.selectedSkuComb,
-      };
+      }
 
-      this.$emit('confirm', data);
+      this.$emit('confirm', data)
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>

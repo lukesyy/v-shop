@@ -49,6 +49,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "manifest" */ '@/views/register/index.vue'),
     meta: {
       title: '注册',
+      headReturn: true,
     },
   },
   {
@@ -57,6 +58,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "manifest" */ '@/views/resetPwd/index.vue'),
     meta: {
       title: '重置密码',
+      headReturn: true,
     },
   },
   {
@@ -65,6 +67,7 @@ const routes = [
     component: () => import('@/views/order/list.vue'),
     meta: {
       title: '订单列表',
+      headReturn: true,
     },
   },
   {
@@ -73,6 +76,7 @@ const routes = [
     component: () => import('@/views/order/detail.vue'),
     meta: {
       title: '订单详情',
+      headReturn: true,
     },
   },
   {
@@ -81,6 +85,7 @@ const routes = [
     component: () => import('@/views/order/submit.vue'),
     meta: {
       title: '提交订单',
+      headReturn: true,
     },
   },
   {
@@ -89,6 +94,7 @@ const routes = [
     component: () => import('@/views/order/payResult.vue'),
     meta: {
       title: '支付结果',
+      headReturn: true,
     },
   },
   {
@@ -97,6 +103,7 @@ const routes = [
     component: () => import('@/views/refund/index.vue'),
     meta: {
       title: '退款/售后',
+      headReturn: true,
     },
   },
   {
@@ -105,6 +112,7 @@ const routes = [
     component: () => import('@/views/refund/apply.vue'),
     meta: {
       title: '申请售后',
+      headReturn: true,
     },
   },
   {
@@ -113,6 +121,7 @@ const routes = [
     component: () => import('@/views/coupon/index.vue'),
     meta: {
       title: '我的优惠券',
+      headReturn: true,
     },
   },
   {
@@ -121,6 +130,7 @@ const routes = [
     component: () => import('@/views/integral/index.vue'),
     meta: {
       title: '积分中心',
+      headReturn: true,
     },
   },
   {
@@ -129,6 +139,7 @@ const routes = [
     component: () => import('@/views/integral/rule.vue'),
     meta: {
       title: '积分规则',
+      headReturn: true,
     },
   },
   {
@@ -137,6 +148,7 @@ const routes = [
     component: () => import('@/views/integral/scoreLog.vue'),
     meta: {
       title: '积分明细',
+      headReturn: true,
     },
   },
   {
@@ -145,6 +157,7 @@ const routes = [
     component: () => import('@/views/integral/exchange.vue'),
     meta: {
       title: '积分兑换',
+      headReturn: true,
     },
   },
   {
@@ -153,6 +166,7 @@ const routes = [
     component: () => import('@/views/wallet/index.vue'),
     meta: {
       title: '我的钱包（资产）',
+      headReturn: true,
     },
   },
   {
@@ -161,6 +175,7 @@ const routes = [
     component: () => import('@/views/wallet/cashLog.vue'),
     meta: {
       title: '资金记录',
+      headReturn: true,
     },
   },
   {
@@ -169,6 +184,7 @@ const routes = [
     component: () => import('@/views/address/index.vue'),
     meta: {
       title: '收货地址',
+      headReturn: true,
     },
   },
   {
@@ -177,6 +193,7 @@ const routes = [
     component: () => import('@/views/address/edit.vue'),
     meta: {
       title: '编辑收货地址',
+      headReturn: true,
     },
   },
   {
@@ -185,6 +202,7 @@ const routes = [
     component: () => import('@/views/good/detail.vue'),
     meta: {
       title: '商品详情',
+      headReturn: true,
     },
   },
   {
@@ -193,6 +211,7 @@ const routes = [
     component: () => import('@/views/good/reputation.vue'),
     meta: {
       title: '全部评价',
+      headReturn: true,
     },
   },
   {
@@ -201,6 +220,7 @@ const routes = [
     component: () => import('@/views/setting/index.vue'),
     meta: {
       title: '设置',
+      headReturn: true,
     },
   },
   {
@@ -209,6 +229,7 @@ const routes = [
     component: () => import('@/views/profile/index.vue'),
     meta: {
       title: '编辑资料',
+      headReturn: true,
     },
   },
   {
@@ -217,6 +238,7 @@ const routes = [
     component: () => import('@/views/theme/index.vue'),
     meta: {
       title: '主题风格',
+      headReturn: true,
     },
   },
   // errorPage
@@ -225,6 +247,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "manifest" */ '@/views/error/reload.vue'),
     meta: {
       title: '加载异常',
+      headReturn: true,
     },
   },
   {
@@ -232,10 +255,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "manifest" */ '@/views/error/404.vue'),
     meta: {
       title: '找不到页面',
+      headReturn: true,
     },
   },
   // 404 Not found
   { path: '*', redirect: '/404' },
-];
+]
 
-export default routes;
+export default routes

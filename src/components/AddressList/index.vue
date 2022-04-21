@@ -6,11 +6,11 @@
       </div>
       <div class="list-item-bd">
         <div class="list-item-name">
-          {{ item.linkMan }} {{ item.mobile }}
-          <span v-if="item.isDefault" class="list-item-tag">默认</span>
+          {{ item.name }} {{ item.phoneNumber }}
+          <span v-if="item.defaultStatus" class="list-item-tag">默认</span>
         </div>
         <div class="list-item-address">
-          {{ formatAddress(item.provinceStr, item.cityStr, item.areaStr, item.address) }}
+          {{ formatAddress( item.province,item.city, item.region, item.detailAddress) }}
         </div>
       </div>
       <div class="list-item-ft" @click.stop="onDetail(index)">
@@ -40,22 +40,17 @@ export default {
       this.$emit('input', item.id);
     },
     onDetail(index) {
-      const { id } = this.list[index];
+      sessionStorage.setItem('addressInfo',JSON.stringify(this.list[index]))
       this.$router.push({
         path: '/address/edit',
-        query: {
-          id: id,
-        },
       });
     },
     // eslint-disable-next-line max-params
     formatAddress(provinceStr, cityStr, areaStr, address) {
       let str = provinceStr;
-
       cityStr.length > 1 && (str += cityStr);
       areaStr.length > 1 && (str += areaStr);
       address && (str += ` ${address}`);
-
       return str;
     },
     onItemClicked(index) {
