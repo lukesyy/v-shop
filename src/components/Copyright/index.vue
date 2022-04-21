@@ -1,23 +1,28 @@
+<!--
+ * @Date: 2022-04-19 13:51:04
+ * @LastEditors: Lukesy
+ * @LastEditTime: 2022-04-21 13:44:52
+-->
 <template>
   <div class="copyright">
     <div class="copyright-p">
-      <a href="https://github.com/JoeshuTT/v-shop" target="_blank">Copyright © 2019-2022 v-shop | v2 </a>
+      <!-- <a href="https://github.com/JoeshuTT/v-shop" target="_blank">Copyright © 2019-2022 v-shop | v2 </a> -->
     </div>
     <div class="copyright-p">最后发布时间：{{ appVersion }}</div>
   </div>
 </template>
 
 <script>
-import { version } from '../../../package.json';
+import { version } from '../../../package.json'
 
 export default {
   data() {
     return {
       version,
       appVersion: process.env.APP_VERSION,
-    };
+    }
   },
-};
+}
 </script>
 
 <style lang="less" scoped>

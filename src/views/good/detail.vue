@@ -30,9 +30,7 @@
       </div>
     </div>
     <div class="stock van-hairline--top">
-      <div class="stock-item">
-        {{ goodDeliveryTitle }}
-      </div>
+      <div class="stock-item">运费 {{ goodsInfo.shippingFee ? '包邮' : '￥' + goodsInfo.shippingFee }}</div>
       <!-- <div class="stock-item">购买：{{ goodsInfo.numberSells }}</div> -->
       <div class="stock-item">剩余 {{ goodsInfo.goodsNumber }}</div>
     </div>
@@ -103,7 +101,7 @@ export default {
   data() {
     return {
       picList: [],
-      goodsInfo: {},
+      goodsInfo: { shippingFee: 0 },
       logistics: {},
       couponList: [],
       reputationList: [],
@@ -163,9 +161,6 @@ export default {
         return ''
       }
     },
-    goodDeliveryTitle() {
-      return `运费 ${this.goodsInfo.shippingFee ? '包邮' : '￥' + this.goodsInfo.shippingFee}`
-    },
   },
   created() {
     this.getGoodsDetail()
@@ -223,7 +218,6 @@ export default {
               // on confirm
               this.$router.replace({ path: '/home' })
             })
-          return
         }
         this.sku = {
           goodsId: res.data.id,

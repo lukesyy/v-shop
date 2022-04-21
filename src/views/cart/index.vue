@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <van-notice-bar wrapable left-icon="volume-o" :scrollable="false" text="本地仓商品和保税仓商品请分别购买下单" />
+    <van-notice-bar wrapable left-icon="volume-o" :scrollable="false" text="本地仓商品和保税仓商品请分别结算" />
     <SpainList v-model="listLoading">
       <template v-if="list.length">
         <div class="goods">
@@ -125,7 +125,7 @@ export default {
       return this.selectedList.reduce((acc, cur) => NP.plus(acc, cur.buyNumber), 0)
     },
     totalPrice() {
-      return this.selectedList.reduce((acc, cur) => NP.plus(acc, NP.times(cur.counterPrice, cur.buyNumber)), 0)
+      return this.selectedList.reduce((acc, cur) => NP.plus(acc, NP.times(cur.counterPrice||0, cur.buyNumber)), 0)
     },
     selectedAll: {
       get() {

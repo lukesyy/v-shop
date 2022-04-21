@@ -1,11 +1,11 @@
 <!--
  * @Date: 2022-04-19 13:50:35
  * @LastEditors: Lukesy
- * @LastEditTime: 2022-04-20 18:11:57
+ * @LastEditTime: 2022-04-21 13:42:36
 -->
 <template>
   <div id="app">
-    <div v-if="$route.meta.headReturn" class="header-nav">
+    <div v-if="$route.meta.headReturn && !system" class="header-nav">
       <HeaderNav :title="$route.meta.title" />
     </div>
     <AppProvider>
@@ -17,8 +17,17 @@
 <script>
 import AppProvider from '@/components/AppProvider'
 import HeaderNav from '@/components/headerNav'
+import { getDevicePlatform } from '@/utils'
 export default {
   components: { AppProvider, HeaderNav },
+  data() {
+    return {
+      system: false,
+    }
+  },
+  created() {
+    this.system = getDevicePlatform().isInWeChatApp || getDevicePlatform().isInMiniProgram
+  },
 }
 </script>
 <style>
